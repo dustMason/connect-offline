@@ -5,10 +5,12 @@
 #Url = require('url')
 #Path = require('path')
 
+_ = require('underscore')
+
 module.exports = offline = (options={}) ->
 
   options.networks ?= []
-  options.fallbacks ?= []
+  options.fallbacks ?= {}
   options.paths ?= []
 
   connectOffline = module.exports.instance = new ConnectOffline options
@@ -23,21 +25,22 @@ class ConnectOffline
   header_section: ->
     "CACHE MANIFEST\n" + "# " + @latestmtime.toUTCString()
 
-  files_section: ->
-    "\n\nCACHE:\n" + @options.paths.join("\n")
+  cache_section: ->
+    "\nCACHE:\n" + @options.paths.join("\n")
 
   networks_section: ->
-    "\n\nNETWORK:\n" + @options.networks.join("\n")
+    "\nNETWORK:\n" + @options.networks.join("\n") if @options.networks.length
 
   fallbacks_section: ->
-    "\n\nFALLBACK:\n" + @options.fallbacks.map((second, first) ->
-      first + " " + second
-    ).join("\n")
+    if @options.fallbacks
+      "\nFALLBACK:\n" + _.map(@options.fallbacks, (second, first) ->
+        first + " " + second
+      ).join("\n")
 
   response: ->
     [
       @header_section()
-      @files_section()
+      @cache_section()
       @networks_section()
       @fallbacks_section()
     ].join("\n")
@@ -50,4 +53,5 @@ class ConnectOffline
         "Last-Modified": @latestmtime.toUTCString()
         "Content-Length": manifest.length
       res.end manifest
-    next()
+    else
+      next()
