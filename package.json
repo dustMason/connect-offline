@@ -1,8 +1,8 @@
 {
   "author": "Jordan Sitkin (http://jordansitkin.com)",
   "name": "connect-offline",
-  "description": "Generates HTML5 Application Cache Manifest files (ala Rack::Offline)",
-  "version": "1.0",
+  "description": "Generates HTML5 Cache Manifest files (ala Rack::Offline)",
+  "version": "1.0.0",
   "homepage": "http://github.com/dustmason/connect-offline",
   "repository": {
     "type": "git",
