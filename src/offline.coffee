@@ -1,10 +1,5 @@
 # [connect-offline](http://github.com/dustmason/connect-offline)
 
-#fs = require('fs')
-#Utils = require('../utils')
-#Url = require('url')
-#Path = require('path')
-
 _ = require('underscore')
 
 module.exports = offline = (options={}) ->

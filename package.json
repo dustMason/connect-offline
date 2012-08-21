@@ -13,7 +13,6 @@
   },
   "main": "lib/offline.js",
   "dependencies": {
-    "mime": "1.2.2",
     "underscore": "1.1.7"
   },
   "devDependencies": {
@@ -22,8 +21,7 @@
     "connect": "1.8.5",
     "nodeunit": "0.5.4",
     "request": "2.1.1",
-    "watchit": "0.0.4",
-    "less": "1.3.0"
+    "watchit": "0.0.4"
   },
   "engines": {
     "node": "0.8.x"
