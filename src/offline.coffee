@@ -1,12 +1,14 @@
 # [connect-offline](http://github.com/dustmason/connect-offline)
 
 _ = require('underscore')
+fs = require('fs')
 
 module.exports = offline = (options={}) ->
 
   options.networks ?= []
   options.fallbacks ?= null
-  options.paths ?= []
+  options.files ?= []
+  options.manifest_path ?= '/application.manifest'
 
   connectOffline = module.exports.instance = new ConnectOffline options
   connectOffline.middleware
@@ -15,13 +17,24 @@ module.exports = offline = (options={}) ->
 class ConnectOffline
 
   constructor: (@options) ->
-    @latestmtime = new Date()
+    @latestmtime = 0
 
   header_section: ->
     "CACHE MANIFEST\n" + "# " + @latestmtime.toUTCString()
 
   cache_section: ->
-    "\nCACHE:\n" + @options.paths.join("\n")
+    files = []
+    root = process.cwd()
+    for dir in @options.files
+      dir_path = root + dir.dir
+      for filename in fs.readdirSync(dir_path)
+        files.push(dir.prefix + filename)
+        stat = fs.statSync(dir_path + '/' + filename)
+        @latestmtime = stat.mtime if stat.mtime > @latestmtime
+      # visit the path at dir.dir
+      # iterate over each file, checking the mtime on it
+      # also add each one to the files array
+    "\nCACHE:\n" + files.join("\n")
 
   networks_section: ->
     "\nNETWORK:\n" + @options.networks.join("\n") if @options.networks.length
@@ -41,7 +54,8 @@ class ConnectOffline
     ].join("\n")
 
   middleware: (req, res, next) =>
-    if "/application.manifest" == req.url
+    if @options.manifest_path == req.url
+      @latestmtime = new Date() if @latestmtime == 0
       manifest = @response()
       res.writeHead 200,
         "Content-Type": "text/cache-manifest"
