@@ -11,8 +11,8 @@ exports['Serves a basic cache manifest file with no extras'] = (test) ->
   app.listen 3590
   request "http://localhost:3590/#{manifest_path}", (err, res, body) ->
     throw err if err
-    test.strictEqual body.search("NETWORK:"), -1
-    test.strictEqual body.search("FALLBACK:"), -1
+    test.ok(body.search("NETWORK:") == -1)
+    test.ok(body.search("FALLBACK:") == -1)
     console.log body
     test.done()
     app.close()

@@ -5,7 +5,7 @@ _ = require('underscore')
 module.exports = offline = (options={}) ->
 
   options.networks ?= []
-  options.fallbacks ?= {}
+  options.fallbacks ?= null
   options.paths ?= []
 
   connectOffline = module.exports.instance = new ConnectOffline options
@@ -27,7 +27,7 @@ class ConnectOffline
     "\nNETWORK:\n" + @options.networks.join("\n") if @options.networks.length
 
   fallbacks_section: ->
-    if @options.fallbacks
+    unless @options.fallbacks == null
       "\nFALLBACK:\n" + _.map(@options.fallbacks, (second, first) ->
         first + " " + second
       ).join("\n")
