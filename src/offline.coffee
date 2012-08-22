@@ -31,9 +31,6 @@ class ConnectOffline
         files.push(dir.prefix + filename)
         stat = fs.statSync(dir_path + '/' + filename)
         @latestmtime = stat.mtime if stat.mtime > @latestmtime
-      # visit the path at dir.dir
-      # iterate over each file, checking the mtime on it
-      # also add each one to the files array
     "\nCACHE:\n" + files.join("\n")
 
   networks_section: ->

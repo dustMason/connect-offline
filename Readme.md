@@ -13,12 +13,26 @@ it inspired me to create a new one.
 
 ## What It Does
 
-Pretty simple right now, no automation out of the box. connect-offline
-simple compiles the arguments you pass into a properly formatted cache
+connect-offline simply compiles the arguments you pass into a properly formatted cache
 manifest file. The main convenience it provides is automatically making
 sure the cache gets re-downloaded by the browser when you update the
 files that are being cached. This is done using the modified-at
 timestamps on the files.
+
+## Options
+
+`manifest_path` is the url you want to serve your cache manifest from.
+This should match the `manifest` attrbute in your html (`<html manifest="example.appcache">`)
+
+`networks` is a simple array of values for the `NETWORK` section of the
+manifest
+
+`fallbacks` is an object to populate the `FALLBACK` section of the
+manifest. Its keys become the urls to handle while its values represent
+the redirects for those urls.
+
+`files` expects an array of objects describing directories of files to
+add to the cache. See below for an example.
 
 ## Check It Out
 
