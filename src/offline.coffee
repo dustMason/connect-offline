@@ -53,8 +53,7 @@ class ConnectOffline
   cache_section: ->
     relative_paths = []
     for dir in @options.files
-      for filename in dir.filenames
-        relative_paths.push(dir.prefix + filename)
+      relative_paths.push(dir.prefix + filename) for filename in dir.filenames
     "\nCACHE:\n" + relative_paths.join("\n")
 
   networks_section: ->
@@ -76,7 +75,7 @@ class ConnectOffline
 
   middleware: (req, res, next) =>
     if @options.manifest_path == req.url
-      @latestmtime = new Date() if @latestmtime == 0 # this happens when no files are given
+      @latestmtime = new Date() if @latestmtime == 0 # when no files are given
       manifest = @response()
       res.writeHead 200,
         "Content-Type": "text/cache-manifest"

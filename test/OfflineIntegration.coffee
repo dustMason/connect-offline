@@ -10,6 +10,7 @@ module.exports['Basic'] = testCase(
 
   setUp: (callback) ->
     @app = require('connect').createServer()
+    @options = manifest_path: MANIFEST_PATH
     @app.listen 3590
     callback()
   tearDown: (callback) ->
@@ -17,7 +18,7 @@ module.exports['Basic'] = testCase(
     @app.close()
 
   'Serves a basic cache manifest file with no extras': (test) ->
-    @app.use offline(manifest_path: MANIFEST_PATH)
+    @app.use offline(@options)
     request "http://localhost:3590#{MANIFEST_PATH}", (err, res, body) ->
       throw err if err
       test.ok(body.search("NETWORK:") == -1)
@@ -25,14 +26,18 @@ module.exports['Basic'] = testCase(
       test.done()
 
   'Serves a cache manifest file with a network section': (test) ->
-    @app.use offline(manifest_path: MANIFEST_PATH, networks: ['/'])
+    @options.networks = ['/']
+    @app.use offline(@options)
     request "http://localhost:3590#{MANIFEST_PATH}", (err, res, body) ->
       throw err if err
       test.ok(body.search("NETWORK:") > 0)
       test.done()
 
   'Serves a cache manifest file with a fallbacks section': (test) ->
-    @app.use offline(manifest_path: MANIFEST_PATH, fallbacks: {'/main.py':'/static.html','*.html':'/offline.html'})
+    @options.fallbacks =
+      'main.py': '/static.html'
+      '*.html':'/offline.html'
+    @app.use offline(@options)
     request "http://localhost:3590#{MANIFEST_PATH}", (err, res, body) ->
       throw err if err
       test.ok(body.search("FALLBACK:") > 0)
@@ -97,14 +102,8 @@ module.exports['Filesystem'] = testCase(
       , 1000)
 
   'Uses fs.watch to keep the cache buster updated when the option is set': (test) ->
-    @app.use(offline
-      manifest_path: MANIFEST_PATH
-      use_fs_watch: true
-      files: [
-        { dir: '/public/css', prefix: '/css/' },
-        { dir: '/public/js', prefix: '/js/' }
-      ]
-    )
+    @options.use_fs_watch = true
+    @app.use(offline @options)
     request "http://localhost:3590#{MANIFEST_PATH}", (err, res, body) ->
       throw err if err
       old_buster = body.split("\n")[1]
