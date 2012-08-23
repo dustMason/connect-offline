@@ -1,7 +1,3 @@
-# TODO
-# implement a setUp and tearDown to reset the contents of the fixture files
-# with each test.
-
 request = require 'request'
 fs = require 'fs'
 offline = require('../lib/offline.js')
