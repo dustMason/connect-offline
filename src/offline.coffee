@@ -47,7 +47,6 @@ class ConnectOffline
       @watchers.push fs.watch(file, {persistent: true}, callback)
 
   header_section: ->
-    @update_latestmtime() unless @options.use_fs_watch
     "CACHE MANIFEST\n" + "# " + @latestmtime.getTime()
 
   cache_section: ->
