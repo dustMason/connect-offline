@@ -28,7 +28,9 @@ class ConnectOffline
   load_file_list: ->
     root = process.cwd()
     @options.files = _.map(@options.files, (set) ->
-      set.filenames = fs.readdirSync(root + set.dir)
+      set.filenames = []
+      for fn in fs.readdirSync(root + set.dir)
+        if fs.statSync(root + set.dir + "/" + fn).isFile() then set.filenames.push(fn)
       set.full_paths = _.map(set.filenames, (filename) ->
         root + set.dir + '/' + filename
       )

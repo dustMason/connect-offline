@@ -66,12 +66,19 @@ module.exports['Filesystem'] = testCase(
     callback()
     @app.close()
 
-  'Accepts a list of files to cache and adds their paths to the manifest': (test) ->
+  'Accepts a list of directories to cache and adds their contents to the manifest': (test) ->
     @app.use(offline @options)
     request "http://localhost:3590#{MANIFEST_PATH}", (err, res, body) ->
       throw err if err
       test.ok(body.search("/css/style.css") > 0)
       test.ok(body.search("/js/hello.js") > 0)
+      test.done()
+
+  'Skips directories when adding entries to the cache manifest': (test) ->
+    @app.use(offline @options)
+    request "http://localhost:3590#{MANIFEST_PATH}", (err, res, body) ->
+      throw err if err
+      test.ok(body.search("/js/empty") < 0)
       test.done()
 
   'Doesnt touch the cache buster when no files have changed': (test) ->
@@ -85,21 +92,7 @@ module.exports['Filesystem'] = testCase(
           new_buster = newbody.split("\n")[1]
           test.ok(old_buster == new_buster)
           test.done()
-      , 1000)
-
-  #'Updates the cache buster when a file is modified': (test) ->
-    #@app.use(offline @options)
-    #request "http://localhost:3590#{MANIFEST_PATH}", (err, res, body) ->
-      #throw err if err
-      #old_buster = body.split("\n")[1]
-      #setTimeout( ->
-        #fs.appendFileSync('public/css/style.css',"\n/* append */")
-        #request "http://localhost:3590#{MANIFEST_PATH}", (err, res, newbody) ->
-          #throw err if err
-          #new_buster = newbody.split("\n")[1]
-          #test.ok(old_buster != new_buster)
-          #test.done()
-      #, 1000)
+      , 1)
 
   'Uses fs.watch to keep the cache buster updated when the option is set': (test) ->
     @options.use_fs_watch = true
@@ -114,6 +107,6 @@ module.exports['Filesystem'] = testCase(
           new_buster = newbody.split("\n")[1]
           test.ok(old_buster != new_buster)
           test.done()
-      , 1000)
+      , 1)
 
 )
