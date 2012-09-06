@@ -1,0 +1,119 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>connect-offline by dustMason</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <script src="javascripts/scale.fix.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1 class="header">connect-offline</h1>
+        <p class="header">An HTML5 Cache Manifest generator for Node.js</p>
+
+        <ul>
+          <li class="download"><a class="buttons" href="https://github.com/dustMason/connect-offline/zipball/master">Download ZIP</a></li>
+          <li class="download"><a class="buttons" href="https://github.com/dustMason/connect-offline/tarball/master">Download TAR</a></li>
+          <li><a class="buttons github" href="https://github.com/dustMason/connect-offline">View On GitHub</a></li>
+        </ul>
+
+        <p class="header">This project is maintained by <a class="header name" href="https://github.com/dustMason">dustMason</a></p>
+
+
+      </header>
+      <section>
+        <h2>Connect-Offline</h2>
+
+<p>While searching for some connect middleware to handle generating a cache
+manifest, I discovered that the CacheManifest middleware had been
+removed from the 1.0 release of Connect. I'm not sure why that is, but
+it inspired me to create a new one.</p>
+
+<h2>Installation</h2>
+
+<pre><code>  npm install connect-offline
+</code></pre>
+
+<h2>What It Does</h2>
+
+<p><em>connect-offline</em> simply compiles the arguments you pass into a properly formatted cache
+manifest file. The main convenience it provides is automatically making
+sure the cache gets re-downloaded by the browser when you update the
+files that are being cached. This is done using the modified-at
+timestamps on the files.</p>
+
+<h2>Options</h2>
+
+<p><code>manifest_path</code> is the url you want to serve your cache manifest from.
+This should match the <code>manifest</code> attribute of your html tag. For example: <code>&lt;html manifest="example.appcache"&gt;</code></p>
+
+<p><code>networks</code> is a simple array of values for the <code>NETWORK</code> section of the
+manifest.</p>
+
+<p><code>fallbacks</code> is an object to populate the <code>FALLBACK</code> section of the
+manifest. Its keys become the urls to handle while its values represent
+the redirects for those urls.</p>
+
+<p><code>files</code> expects an array of objects describing directories of files to
+add to the cache. See below for an example.</p>
+
+<p><code>use_fs_watch</code> is a boolean that indicates whether or not you want node
+to call fs.watch() on each file you are including in the cache manifest
+with a callback that will update the "cache buster" timestamp when any
+of those files change. You might want to use this option to ease
+development - you won't have to restart your server process every time
+you change a file and want browsers to download the new cache manifest.
+See the tests for more info.</p>
+
+<h2>Check It Out</h2>
+
+<p>Given a directory structure:</p>
+
+<pre><code>├── app.js
+└── public
+    ├── css
+    │   └── style.css
+    └── js
+        └── hello.js
+</code></pre>
+
+<p>And this app.coffee:</p>
+
+<pre><code>  offline = require('connect-offline')
+  app = require('connect').createServer()
+  app.use(offline
+    manifest_path: "/application.manifest"
+    files: [
+      { dir: '/public/css', prefix: '/css/' },
+      { dir: '/public/js', prefix: '/js/' }
+    ]
+  )
+  app.listen 3590
+</code></pre>
+
+<p>You'll get an <code>application.manifest</code> that looks like this:</p>
+
+<pre><code>  CACHE MANIFEST
+  # Wed, 22 Aug 2012 03:24:19 GMT
+
+  CACHE:
+  /css/style.css
+  /js/hello.js
+</code></pre>
+      </section>
+      <footer>
+        <p><small>Hosted on <a href="https://pages.github.com">GitHub Pages</a> using the Dinky theme</small></p>
+      </footer>
+    </div>
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+		
+  </body>
+</html>
